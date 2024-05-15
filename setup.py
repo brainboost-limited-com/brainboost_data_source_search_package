@@ -1,0 +1,53 @@
+from setuptools import setup, find_packages
+
+setup(
+    name='brainboost_data_source_search_package',
+    version='0.1.0',
+    author='Pablo Tomas Borda',
+    author_email='pablotomasborda@hotmail.com',
+    description='This package is an API to search engines and local search tools.',
+    long_description='',
+    long_description_content_type='text/markdown',
+    url='https://github.com/yourusername/your_package_name',
+    packages=find_packages(),
+    classifiers=[
+        'Development Status :: 3 - Alpha',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: MIT License',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Operating System :: OS Independent',
+    ],
+    python_requires='>=3.6',
+    install_requires=[
+        'beautifulsoup4==4.12.3',
+        'certifi==2024.2.2',
+        'charset-normalizer==3.3.2',
+        'dnspython==2.6.1',
+        'exceptiongroup==1.2.1',
+        'idna==3.7',
+        'iniconfig==2.0.0',
+        'lxml==5.2.1',
+        'packaging==24.0',
+        'pluggy==1.5.0',
+        'PySocks==1.7.1',
+        'pytest==8.1.1',
+        'requests==2.31.0',
+        'schedule==1.2.1',
+        'soupsieve==2.5',
+        'stem==1.8.2',
+        'tld==0.13',
+        'tomli==2.0.1',
+        'urllib3==2.2.1',
+        'whois==1.20240129.2',
+        'search_engines @ git+https://github.com/PabloBorda/tools_goldenthinkerextractor.git@7bb819ba7398726876467d64bb777e28b4a9984d#egg=search_engines&subdirectory=Search-Engines-Scraper'
+    ],
+    entry_points={
+        'console_scripts': [
+            'your_script_name = your_package_name.module_name:main_function',
+        ],
+    },
+)

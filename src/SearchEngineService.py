@@ -1,0 +1,139 @@
+from bs4 import BeautifulSoup
+import requests
+import editdistance
+
+from search_engines import Google
+from search_engines import Bing
+from search_engines import Yahoo
+from search_engines import Duckduckgo
+from search_engines import Startpage
+from search_engines import Aol
+from search_engines import Dogpile
+from search_engines import Ask
+from search_engines import Mojeek
+from search_engines import Brave
+from search_engines import Torch
+from src.brainboost_data_source_requests.ProxyPool import ProxyPool
+from src.brainboost_data_source_requests.UserAgentPool import UserAgentPool
+
+
+
+import random
+from urllib.parse import urlparse
+from tld import get_tld
+
+import whois
+import dns.resolver
+
+from src.brainboost_data_source_search.GoogleSearchSerpapi import GoogleSearchSerpapi
+
+class SearchEngineService:
+
+
+    def __init__(self) -> None:
+        user_agents = []
+        file_path = '/brainboost/brainboost_data/data_tools/tools_goldenthinkerextractor_dataprocessing/resources/user_agents.txt'
+        
+        with open(file_path, 'r') as file:
+            for line in file:
+                # Remove leading/trailing whitespace and add to the list
+                user_agent = line.strip()
+                user_agents.append(user_agent)
+        self._engines_dict = { 
+                    "google_search_local-Search-Engine-Scraper":Google(),
+                    "bing_search_local-Search-Engine-Scraper":Bing(),
+                    "yahoo_search_local-Search-Engine-Scraper":Yahoo(),
+                    "duckduckgo_search_local-Search-Engine-Scraper":Duckduckgo(),
+                    "startpage_search_local-Search-Engine-Scraper":Startpage(),
+                    "aol_search_local-Search-Engine-Scraper":Aol(),
+                    "dogpile_search_local-Search-Engine-Scraper":Dogpile(),
+                    "ask_search_local-Search-Engine-Scraper":Ask(),
+                    "mojeek_search_local-Search-Engine-Scraper": Mojeek(),
+                    "brave_search_local-Search-Engine-Scraper": Brave(),
+                    "torch_search_local-Search-Engine-Scraper": Torch(),
+                    "google_search_serpapi": GoogleSearchSerpapi()
+        }
+        self._proxy_pool = ProxyPool()
+        self._useragent_pool = UserAgentPool()
+
+        
+
+        self._domain_for = {}
+        pass
+
+
+
+    def load_user_agents(self,file_path):
+        try:
+            with open(file_path, 'r') as f:
+                user_agents = [line.strip() for line in f if line.strip()]
+            return user_agents
+        except Exception as e:
+            print(f"Error loading user agents file: {e}")
+            return []
+
+
+
+    def get_random_user_agent(self):
+        user_agents = self.load_user_agents('../resources/user_agents.txt')
+        return random.choice(user_agents)
+
+
+
+    def search(self,q="",engine=None,preview=False):
+        print("Executing Query: " + q)        
+        if engine==None:
+
+            # Iterate over the dictionary items
+            for key, engine in self._engines_dict.items():
+                try:
+                    print("Searching from agent : " + key)
+                    results = engine.search(q,pages=1)
+                    if results:
+                        links = results.links()
+                        if links: 
+                            return links
+                    else:
+                        print(key + " engine failed. Using another..")
+                except:
+                    print("Error using search agent: " + key)
+        else:
+            results = self._engines_dict[engine].search(q)
+            links = results.links()
+            return links
+    
+
+
+    def possible_email_addresses_of_a_contact(self, first_name, last_name, company_name):
+        company_domain = self.get_company_domain_for(company_name)
+        
+        if company_domain:
+            if self.get_email_enabled(company_domain):
+                # Prepare email formats based on typical conventions
+                possible_emails = [
+                    f"{first_name.lower()}.{last_name.lower()}@{company_domain}",
+                    f"{first_name.lower()[0]}{last_name.lower()}@{company_domain}",
+                    f"{first_name.lower()}_{last_name.lower()}@{company_domain}",
+                    f"{last_name.lower()}{first_name.lower()}@{company_domain}",
+                    f"{first_name.lower()}{last_name.lower()}@{company_domain}",
+                    f"{first_name.lower()}_{last_name.lower()}@{company_domain}",
+                    f"{first_name.lower()}.{last_name.lower()}@{company_domain}"
+                ]
+            else:
+                possible_emails = [
+                    f"{first_name.lower()}.{last_name.lower()}@gmail.com",
+                    f"{first_name.lower()[0]}{last_name.lower()}@gmail.com",
+                    f"{first_name.lower()}_{last_name.lower()}@gmail.com",
+                    f"{last_name.lower()}{first_name.lower()}@gmail.com",
+                    f"{first_name.lower()}{last_name.lower()}@gmail.com",
+                    f"{first_name.lower()}_{last_name.lower()}@gmail.com",
+                    f"{first_name.lower()}.{last_name.lower()}@gmail.com",
+                ]
+        else:
+            possible_emails = []  # Return an empty list if company_domain is None
+            
+        print(possible_emails)
+        return possible_emails
+
+
+
