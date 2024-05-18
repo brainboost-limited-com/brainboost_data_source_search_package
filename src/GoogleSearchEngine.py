@@ -1,17 +1,19 @@
-import SearchEngineService
-from config import PROXY, TIMEOUT, FAKE_USER_AGENT
-from utils import unquote_url, quote_url
+from src.SearchEngine import SearchEngine
+
+from src.utils import unquote_url, quote_url
 from bs4 import BeautifulSoup
+from brainboost_data_source_requests_package.UserAgentPool import UserAgentPool
 
 
-class GoogleSearchEngineService(SearchEngineService):
+class GoogleSearchEngine(SearchEngine):
     '''Searches google.com'''
-    def __init__(self, proxy=PROXY, timeout=TIMEOUT):
-        super(Google, self).__init__(proxy, timeout)
+    def __init__(self, proxy=None, timeout=10):
+        super(GoogleSearchEngine, self).__init__(proxy, timeout)
         self._base_url = 'https://www.google.com'
         self._delay = (2, 6)
-        
-        self.set_headers({'User-Agent':FAKE_USER_AGENT})
+        uap = UserAgentPool()
+
+        self.set_headers({'User-Agent':uap.get_random_user_agent()})
 
     def _selectors(self, element):
         '''Returns the appropriate CSS selector.'''
@@ -78,6 +80,6 @@ class GoogleSearchEngineService(SearchEngineService):
 
     def _get_page(self, page, data=None):
         '''Gets pagination links.'''
-        page = super(Google, self)._get_page(page, data)
+        page = super(GoogleSearchEngine, self)._get_page(page, data)
         page = self._check_consent(page)
         return page

@@ -1,7 +1,8 @@
 import requests
-import SearchEngineService
+from src.SearchEngine import SearchEngine
 
-class GoogleSearchSerpapiEngineService(SearchEngineService):
+
+class GoogleSearchSerpapiEngine(SearchEngine):
 
     def __init__(self) -> None:
         # Replace 'YOUR_SERPAPI_API_KEY' with your actual SerpApi API key

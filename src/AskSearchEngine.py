@@ -1,11 +1,11 @@
-import SearchEngineService
-from config import PROXY, TIMEOUT
+from src.SearchEngine import SearchEngine
 
 
-class AskSearchEngineService(SearchEngineService):
+
+class AskSearchEngine(SearchEngine):
     '''Searches ask.com'''
-    def __init__(self, proxy=PROXY, timeout=TIMEOUT):
-        super(Ask, self).__init__(proxy, timeout)
+    def __init__(self, proxy=None, timeout=10):
+        super(AskSearchEngine, self).__init__(proxy, timeout)
         self._base_url = 'https://uk.ask.com'
     
     def _selectors(self, element):

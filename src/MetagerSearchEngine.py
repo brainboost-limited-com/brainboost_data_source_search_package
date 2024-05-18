@@ -2,12 +2,12 @@ from bs4 import BeautifulSoup
 
 from search_engines.engine import SearchEngineService
 from search_engines.config import PROXY, TIMEOUT, FAKE_USER_AGENT
+from src.SearchEngine import SearchEngine
 
-
-class MetagerSearchEngineService(SearchEngineService):
+class Metager(SearchEngine):
     '''Searches metager.org'''
 
-    def __init__(self, proxy=PROXY, timeout=TIMEOUT):
+    def __init__(self, proxy=None, timeout=10):
         super(Metager, self).__init__(proxy, timeout)
         self._base_url = 'https://metager.org'
         self.set_headers({'User-Agent': FAKE_USER_AGENT})

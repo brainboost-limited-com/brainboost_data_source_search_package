@@ -1,15 +1,14 @@
-from ..engine import SearchEngine
-from config import TOR, TIMEOUT
-from .. import output as out
+from src.SearchEngine import SearchEngine
 
 
-class Torch(SearchEngine):
+
+class TorchSearchEngine(SearchEngine):
     '''Uses torch search engine. Requires TOR proxy.'''
-    def __init__(self, proxy=TOR, timeout=TIMEOUT):
-        super(Torch, self).__init__(proxy, timeout)
+    def __init__(self, proxy=None, timeout=10):
+        super(TorchSearchEngine, self).__init__(proxy, timeout)
         self._base_url = u'http://torchdeedp3i2jigzjdmfpn5ttjhthh5wbmda2rr3jvqjg5p77c54dqd.onion'
         if not proxy:
-            out.console('Torch requires TOR proxy!', level=out.Level.warning)
+            print('Torch requires TOR proxy!')
         self._current_page = 1
     
     def _selectors(self, element):

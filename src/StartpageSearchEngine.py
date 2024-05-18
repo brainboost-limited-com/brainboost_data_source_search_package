@@ -1,16 +1,18 @@
 from bs4 import BeautifulSoup
 
-from ..engine import SearchEngine
-from config import PROXY, TIMEOUT, FAKE_USER_AGENT
-from .. import output as out
+from src.SearchEngine import SearchEngine
+from src.output import output as out
+from brainboost_data_source_requests_package.UserAgentPool import UserAgentPool
 
 
 class Startpage(SearchEngine):
     '''Searches startpage.com'''
-    def __init__(self, proxy=PROXY, timeout=TIMEOUT): 
+    def __init__(self, proxy=None, timeout=10): 
         super(Startpage, self).__init__(proxy, timeout)
         self._base_url = 'https://www.startpage.com'
-        self.set_headers({'User-Agent':FAKE_USER_AGENT})
+        uap = UserAgentPool()
+        
+        self.set_headers({'User-Agent':uap.get_random_user_agent()})
     
     def _selectors(self, element):
         '''Returns the appropriate CSS selector.'''
@@ -67,5 +69,5 @@ class Startpage(SearchEngine):
         if response.http == 200 and not is_blocked:
             return True
         msg = 'Banned' if is_blocked else ('HTTP ' + str(response.http)) if response.http else response.html
-        out.console(msg, level=out.Level.error)
+        print(msg)
         return False

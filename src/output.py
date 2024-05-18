@@ -5,15 +5,12 @@ import json
 import io
 import re
 from collections import namedtuple
+from shutil import get_terminal_size  # Importing directly from shutil
 
-try:
-    from shutil import get_terminal_size
-except ImportError:
-    from .libs.get_terminal_size import get_terminal_size
-    
-from .utils import encode_str, decode_bytes
-from .libs import windows_cmd_encoding
-from .config import PYTHON_VERSION
+from src.utils import encode_str, decode_bytes
+import sys
+
+PYTHON_VERSION = 3 if sys.version_info[0] == 3 else 2
 
 
 def print_results(search_engines):

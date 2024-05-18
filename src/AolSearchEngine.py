@@ -1,11 +1,11 @@
-from YahooSearchEngineService import YahooSearchEngineService
-from config import PROXY, TIMEOUT
+from src.YahooSearchEngine import YahooSearchEngine
 
 
-class AolSearchEngineService(YahooSearchEngineService):
+
+class AolSearchEngine(YahooSearchEngine):
     '''Seaches aol.com'''
-    def __init__(self, proxy=PROXY, timeout=TIMEOUT):
-        super(Aol, self).__init__(proxy, timeout)
+    def __init__(self, proxy=None, timeout=10):
+        super(AolSearchEngine, self).__init__(proxy, timeout)
         self._base_url = u'https://search.aol.com'
 
     def _first_page(self):

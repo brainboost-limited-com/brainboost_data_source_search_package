@@ -1,13 +1,14 @@
 import json
 import os
 from tqdm import tqdm
-from src.brainboost_data_source_processing.JSonProcessor import JSonProcessor
-from src.brainboost_data_source_search.CompanyDomainSearchEngineService import CompanyDomainSearchEngineService
+from brainboost_data_tools_json_package.JSonProcessor import JSonProcessor
+
+from src.CompanyDomainSearchEngine import CompanyDomainSearchEngine
 from tinydb import TinyDB, Query
 
 json_processor = JSonProcessor()
-search_engine = CompanyDomainSearchEngineService()
-data_source = 'resources/resources_data/data_subjective'
+search_engine = CompanyDomainSearchEngine()
+data_source = '/brainboost/brainboost_data/data_storage/storage_local/local_goldenthinkerextractor_data/data_subjective'
 
 def get_companies(contacts):
     return json_processor.collect_values_of_particular_key_to_set(json_array=contacts, key='company')
@@ -36,16 +37,16 @@ if __name__ == "__main__":
     companies = get_companies(contacts=contacts)
     
     # Create/open TinyDB database
-    db = TinyDB('resources/resources_data/data_subjective/company_domains.json')
+    db = TinyDB('/brainboost/brainboost_data/data_storage/storage_local/local_goldenthinkerextractor_data/company_domains.json')
     
     # Process company domains with progress bar and store in TinyDB
     process_company_domains(companies, search_engine, db)
     
     # Define output file path for JSON backup (optional)
-    output_file = 'resources/companies.json'
+    #output_file = 'resources/companies.json'
     
     # Save company domains to JSON file (backup, not necessary if using TinyDB)
-    save_company_domains_to_json(db, output_file)
+    #save_company_domains_to_json(db, output_file)
     
     print(f"Company domains processed and saved to TinyDB")
 

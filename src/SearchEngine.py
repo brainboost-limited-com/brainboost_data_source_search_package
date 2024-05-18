@@ -2,22 +2,23 @@ from bs4 import BeautifulSoup
 from time import sleep
 from random import uniform as random_uniform
 from collections import namedtuple
-
-import SearchResults
-from .http_client import HttpClient
-import utils
-import output as out
-import config as cfg
+import requests
+import sys
+from src.SearchResults import SearchResults
+from brainboost_data_source_requests_package.TorRequest import TorRequest
+import src.output as out
+import src.config as cfg
 
 
 class SearchEngine(object):
+
     '''The base class for all Search Engines.'''
-    def __init__(self, proxy=cfg.PROXY, timeout=cfg.TIMEOUT):
+    def __init__(self, proxy=None, timeout=10):
         '''
         :param str proxy: optional, a proxy server  
         :param int timeout: optional, the HTTP timeout
         '''
-        self._http_client = HttpClient(timeout) 
+        self._http_client = TorRequest(timeout) 
         self._delay = (1, 4)
         self._query = ''
         self._filters = []
@@ -29,7 +30,37 @@ class SearchEngine(object):
         self.ignore_duplicate_domains = False
         '''Collects only unique domains.'''
         self.is_banned = False
-        '''Indicates if a ban occured'''
+        '''Indicates if a ban occurred'''
+
+    def quote_url(self, url, safe=';/?:@&=+$,#'):
+        '''Encodes URLs.'''
+        if sys.version_info[0] < 3:
+            url = self.encode_str(url)
+        return requests.utils.quote(url, safe=safe)
+
+    def unquote_url(self, url):
+        '''Decodes URLs.'''
+        if sys.version_info[0] < 3:
+            url = self.encode_str(url)
+        return self.decode_bytes(requests.utils.unquote(url))
+
+    def is_url(self, link):
+        '''Checks if link is URL'''
+        parts = requests.utils.urlparse(link)
+        return bool(parts.scheme and parts.netloc)
+
+    def domain(self, url):
+        '''Returns domain form URL'''
+        host = requests.utils.urlparse(url).netloc
+        return host.lower().split(':')[0].replace('www.', '')
+
+    def encode_str(self, s, encoding='utf-8', errors='replace'):
+        '''Encodes unicode to str, str to bytes.'''
+        return s if type(s) is bytes else s.encode(encoding, errors=errors)
+
+    def decode_bytes(self, s, encoding='utf-8', errors='replace'):
+        '''Decodes bytes to str, str to unicode.'''
+        return s.decode(encoding, errors=errors) if type(s) is bytes else s
 
     def _selectors(self, element):
         '''Returns the appropriate CSS selector.'''
@@ -47,7 +78,7 @@ class SearchEngine(object):
         '''Returns the URL of search results items.'''
         selector = self._selectors('url')
         url = self._get_tag_item(tag.select_one(selector), item)
-        return utils.unquote_url(url)
+        return self.unquote_url(url)
     
     def _get_title(self, tag, item='text'):
         '''Returns the title of search results items.'''
@@ -74,7 +105,7 @@ class SearchEngine(object):
     def _item(self, link):
         '''Returns a dictionary of the link data.'''
         return {
-            'host': utils.domain(self._get_url(link)), 
+            'host': self.domain(self._get_url(link)), 
             'link': self._get_url(link), 
             'title': self._get_title(link).strip(), 
             'text': self._get_text(link).strip()
@@ -96,13 +127,13 @@ class SearchEngine(object):
         if u'text' in self._filters:
             results = [l for l in results if self._query_in(l['text'])]
         if u'host' in self._filters:
-            results = [l for l in results if self._query_in(utils.domain(l['link']))]
+            results = [l for l in results if self._query_in(self.domain(l['link']))]
         return results
     
     def _collect_results(self, items):
         '''Colects the search results items.''' 
         for item in items:
-            if not utils.is_url(item['link']):
+            if not self.is_url(item['link']):
                 continue
             if item in self.results:
                 continue
@@ -119,7 +150,7 @@ class SearchEngine(object):
         if response.http == 200:
             return True
         msg = ('HTTP ' + str(response.http)) if response.http else response.html
-        out.console(msg, level=out.Level.error)
+        print(msg)
         return False
     
     def disable_console(self):
@@ -139,25 +170,20 @@ class SearchEngine(object):
 
         :param operator: str The search operator(s)
         '''
-        operators = utils.decode_bytes(operator or u'').lower().split(u',')
+        operators = self.decode_bytes(operator or u'').lower().split(u',')
         supported_operators = [u'url', u'title', u'text', u'host']
 
         for operator in operators:
             if operator not in supported_operators:
                 msg = u'Ignoring unsupported operator "{}"'.format(operator)
-                out.console(msg, level=out.Level.warning)
+                print(msg)
             else:
                 self._filters += [operator]
     
     def search(self, query, pages=cfg.SEARCH_ENGINE_RESULTS_PAGES): 
-        '''Queries the search engine, goes through the pages and collects the results.
-        
-        :param query: str The search query  
-        :param pages: int Optional, the maximum number of results pages to search  
-        :returns SearchResults object
-        '''
-        out.console('Searching {}'.format(self.__class__.__name__))
-        self._query = utils.decode_bytes(query)
+
+        print('Searching {}'.format(self.__class__.__name__))
+        self._query = self.decode_bytes(query)
         self.results = SearchResults()
         request = self._first_page()
 
@@ -171,7 +197,7 @@ class SearchEngine(object):
                 self._collect_results(items)
                 
                 msg = 'page: {:<8} links: {}'.format(page, len(self.results))
-                out.console(msg, end='')
+                print(msg, end='')
                 request = self._next_page(tags)
 
                 if not request['url']:
@@ -180,26 +206,26 @@ class SearchEngine(object):
                     sleep(random_uniform(*self._delay))
             except KeyboardInterrupt:
                 break
-        out.console('', end='')
+        print('', end='')
         return self.results
     
-    def output(self, output=out.PRINT, path=None):
-        '''Prints search results and/or creates report files.
-        Supported output format: html, csv, json.
+    # def output(self, output=out.PRINT, path=None):
+    #     '''Prints search results and/or creates report files.
+    #     Supported output format: html, csv, json.
         
-        :param output: str Optional, the output format  
-        :param path: str Optional, the file to save the report  
-        '''
-        output = (output or '').lower()
-        if not path:
-            path = cfg.os_path.join(cfg.OUTPUT_DIR, u'_'.join(self._query.split()))
-        out.console('')
+    #     :param output: str Optional, the output format  
+    #     :param path: str Optional, the file to save the report  
+    #     '''
+    #     output = (output or '').lower()
+    #     if not path:
+    #         path = cfg.os_path.join(cfg.OUTPUT_DIR, u'_'.join(self._query.split()))
+    #     print('')
 
-        if out.PRINT in output:
-            out.print_results([self])
-        if out.HTML in output:
-            out.write_file(out.create_html_data([self]), path + u'.html') 
-        if out.CSV in output:
-            out.write_file(out.create_csv_data([self]), path + u'.csv') 
-        if out.JSON in output:
-            out.write_file(out.create_json_data([self]), path + u'.json')
+    #     if out.PRINT in output:
+    #         out.print_results([self])
+    #     if out.HTML in output:
+    #         out.write_file(out.create_html_data([self]), path + u'.html') 
+    #     if out.CSV in output:
+    #         out.write_file(out.create_csv_data([self]), path + u'.csv') 
+    #     if out.JSON in output:
+    #         out.write_file(out.create_json_data([self]), path + u'.json')

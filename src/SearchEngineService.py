@@ -2,19 +2,20 @@ from bs4 import BeautifulSoup
 import requests
 import editdistance
 
-from search_engines import Google
-from search_engines import Bing
-from search_engines import Yahoo
-from search_engines import Duckduckgo
-from search_engines import Startpage
-from search_engines import Aol
-from search_engines import Dogpile
-from search_engines import Ask
-from search_engines import Mojeek
-from search_engines import Brave
-from search_engines import Torch
-from src.brainboost_data_source_requests.ProxyPool import ProxyPool
-from src.brainboost_data_source_requests.UserAgentPool import UserAgentPool
+from src.GoogleSearchEngine import GoogleSearchEngine
+from src.GoogleSearchSerpapiEngine import GoogleSearchSerpapiEngine
+from src.BingSearchEngine import BingSearchEngine
+from src.YahooSearchEngine import YahooSearchEngine
+from src.DuckDuckGoSearchEngine import DuckDuckGoSearchEngine
+from src.StartpageSearchEngine import StartpageSearchEngine
+from src.AolSearchEngine import AolSearchEngine
+from src.DogpileSearchEngine import DogpileSearchEngine
+from src.AskSearchEngine import AskSearchEngine
+from src.MojeekSearchEngine import MojeekSearchEngine
+from src.BraveSearchEngine import BraveSearchEngine
+from src.TorchSearchEngine import TorchSearchEngine
+from brainboost_data_source_requests_package.ProxyPool import ProxyPool
+from brainboost_data_source_requests_package.UserAgentPool import UserAgentPool
 
 
 
@@ -25,7 +26,7 @@ from tld import get_tld
 import whois
 import dns.resolver
 
-from src.brainboost_data_source_search.GoogleSearchSerpapi import GoogleSearchSerpapi
+from src.GoogleSearchSerpapiEngine import GoogleSearchSerpapiEngineService
 
 class SearchEngineService:
 
@@ -40,18 +41,18 @@ class SearchEngineService:
                 user_agent = line.strip()
                 user_agents.append(user_agent)
         self._engines_dict = { 
-                    "google_search_local-Search-Engine-Scraper":Google(),
-                    "bing_search_local-Search-Engine-Scraper":Bing(),
-                    "yahoo_search_local-Search-Engine-Scraper":Yahoo(),
-                    "duckduckgo_search_local-Search-Engine-Scraper":Duckduckgo(),
-                    "startpage_search_local-Search-Engine-Scraper":Startpage(),
-                    "aol_search_local-Search-Engine-Scraper":Aol(),
-                    "dogpile_search_local-Search-Engine-Scraper":Dogpile(),
-                    "ask_search_local-Search-Engine-Scraper":Ask(),
-                    "mojeek_search_local-Search-Engine-Scraper": Mojeek(),
-                    "brave_search_local-Search-Engine-Scraper": Brave(),
-                    "torch_search_local-Search-Engine-Scraper": Torch(),
-                    "google_search_serpapi": GoogleSearchSerpapi()
+                    "google_search_local-Search-Engine-Scraper":GoogleSearchEngine(),
+                    "bing_search_local-Search-Engine-Scraper":BingSearchEngine(),
+                    "yahoo_search_local-Search-Engine-Scraper":YahooSearchEngine(),
+                    "duckduckgo_search_local-Search-Engine-Scraper":DuckDuckGoSearchEngine(),
+                    "startpage_search_local-Search-Engine-Scraper":StartpageSearchEngine(),
+                    "aol_search_local-Search-Engine-Scraper":AolSearchEngine(),
+                    "dogpile_search_local-Search-Engine-Scraper":DogpileSearchEngine(),
+                    "ask_search_local-Search-Engine-Scraper":AskSearchEngine(),
+                    "mojeek_search_local-Search-Engine-Scraper": MojeekSearchEngine(),
+                    "brave_search_local-Search-Engine-Scraper": BraveSearchEngine(),
+                    "torch_search_local-Search-Engine-Scraper": TorchSearchEngine(),
+                    "google_search_serpapi": GoogleSearchSerpapiEngine()
         }
         self._proxy_pool = ProxyPool()
         self._useragent_pool = UserAgentPool()

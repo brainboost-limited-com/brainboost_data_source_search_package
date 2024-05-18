@@ -1,12 +1,12 @@
-from ..engine import SearchEngine
-from config import PROXY, TIMEOUT
-from ..utils import unquote_url
+from src.SearchEngine import SearchEngine
+
+from src.utils import unquote_url
 
 
-class Yahoo(SearchEngine):
+class YahooSearchEngine(SearchEngine):
     '''Searches yahoo.com'''
-    def __init__(self, proxy=PROXY, timeout=TIMEOUT):
-        super(Yahoo, self).__init__(proxy, timeout)
+    def __init__(self, proxy=None, timeout=10):
+        super(YahooSearchEngine, self).__init__(proxy, timeout)
         self._base_url = 'https://search.yahoo.com'
     
     def _selectors(self, element):

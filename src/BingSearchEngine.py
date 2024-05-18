@@ -1,11 +1,10 @@
-import SearchEngineService
-from config import PROXY, TIMEOUT, FAKE_USER_AGENT
+from src.SearchEngine import SearchEngine
 
 
-class BingSearchEngineService(SearchEngineService):
+class BingSearchEngine(SearchEngine):
     '''Searches bing.com'''
-    def __init__(self, proxy=PROXY, timeout=TIMEOUT):
-        super(Bing, self).__init__(proxy, timeout)
+    def __init__(self, proxy=None, timeout=10):
+        super(BingSearchEngine, self).__init__(proxy, timeout)
         self._base_url = u'https://www.bing.com'
         self.set_headers({'User-Agent':FAKE_USER_AGENT})
 
@@ -37,4 +36,4 @@ class BingSearchEngineService(SearchEngineService):
 
     def _get_url(self, tag, item='href'):
         '''Returns the URL of search results items.'''
-        return super(Bing, self)._get_url(tag, 'text')
+        return super(BingSearchEngine, self)._get_url(tag, 'text')

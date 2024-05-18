@@ -1,14 +1,16 @@
-import SearchEngineService
-from config import PROXY, TIMEOUT, FAKE_USER_AGENT
-from utils import unquote_url
+from src.SearchEngine import SearchEngine
+from brainboost_data_source_requests_package.UserAgentPool import UserAgentPool
+
+from src.utils import unquote_url
 
 
-class DogpileSearchEngineService(SearchEngineService):
+class DogpileSearchEngine(SearchEngine):
     '''Seaches dogpile.com'''
-    def __init__(self, proxy=PROXY, timeout=TIMEOUT):
-        super(Dogpile, self).__init__(proxy, timeout)
+    def __init__(self, proxy=None, timeout=10):
+        super(DogpileSearchEngine, self).__init__(proxy, timeout)
         self._base_url = 'https://www.dogpile.com'
-        self.set_headers({'User-Agent':FAKE_USER_AGENT})
+        uap = UserAgentPool()
+        self.set_headers({'User-Agent':uap.get_random_user_agent()})
     
     def _selectors(self, element):
         '''Returns the appropriate CSS selector.'''

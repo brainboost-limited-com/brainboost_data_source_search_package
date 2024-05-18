@@ -5,7 +5,7 @@ import dns
 import editdistance
 from urllib.parse import urlparse
 from tinydb import TinyDB, Query
-import SearchEngineService
+from src.SearchEngineService import SearchEngineService
 import tldextract
 import dns.resolver
 

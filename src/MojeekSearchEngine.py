@@ -1,13 +1,13 @@
-import SearchEngineService
-from config import PROXY, TIMEOUT, FAKE_USER_AGENT
+from src.SearchEngine import SearchEngine
+from brainboost_data_source_requests_package.UserAgentPool import UserAgentPool
 
-
-class MojeekSearchEngineService(SearchEngineService):
+class MojeekSearchEngine(SearchEngine):
     '''Searches mojeek.com'''
-    def __init__(self, proxy=PROXY, timeout=TIMEOUT):
-        super(Mojeek, self).__init__(proxy, timeout)
+    def __init__(self, proxy=None, timeout=10):
+        super(MojeekSearchEngine, self).__init__(proxy, timeout)
         self._base_url = 'https://www.mojeek.com'
-        self.set_headers({'User-Agent':FAKE_USER_AGENT})
+        ua = UserAgentPool()
+        self.set_headers({'User-Agent':ua.get_random_user_agent()})
     
     def _selectors(self, element):
         '''Returns the appropriate CSS selector.'''
