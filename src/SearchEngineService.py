@@ -37,7 +37,7 @@ class SearchEngineService:
 
     def __init__(self) -> None:
         user_agents = []
-        file_path = '/brainboost/brainboost_data/data_tools/tools_goldenthinkerextractor_dataprocessing/resources/user_agents.txt'
+        file_path = '/brainboost/brainboost_data/data_source/data_source_user_agents.txt'
         
         with open(file_path, 'r') as file:
             for line in file:
