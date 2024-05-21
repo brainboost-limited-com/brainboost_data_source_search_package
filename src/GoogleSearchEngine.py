@@ -3,7 +3,7 @@ from src.SearchEngine import SearchEngine
 from src.utils import unquote_url, quote_url
 from bs4 import BeautifulSoup
 from brainboost_data_source_requests_package.UserAgentPool import UserAgentPool
-
+from configuration import storage_user_agent_pool_database_path
 
 class GoogleSearchEngine(SearchEngine):
     '''Searches google.com'''
@@ -11,7 +11,7 @@ class GoogleSearchEngine(SearchEngine):
         super(GoogleSearchEngine, self).__init__(proxy, timeout)
         self._base_url = 'https://www.google.com'
         self._delay = (2, 6)
-        uap = UserAgentPool()
+        uap = UserAgentPool(user_agents_list_path=storage_user_agent_pool_database_path)
 
         self.set_headers({'User-Agent':uap.get_random_user_agent()})
 

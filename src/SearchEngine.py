@@ -18,7 +18,7 @@ class SearchEngine(object):
         :param str proxy: optional, a proxy server  
         :param int timeout: optional, the HTTP timeout
         '''
-        self._http_client = TorRequest(timeout) 
+        self._http_client = TorRequest() 
         self._delay = (1, 4)
         self._query = ''
         self._filters = []
@@ -180,7 +180,7 @@ class SearchEngine(object):
             else:
                 self._filters += [operator]
     
-    def search(self, query, pages=cfg.SEARCH_ENGINE_RESULTS_PAGES): 
+    def search(self, query, pages=1): 
 
         print('Searching {}'.format(self.__class__.__name__))
         self._query = self.decode_bytes(query)

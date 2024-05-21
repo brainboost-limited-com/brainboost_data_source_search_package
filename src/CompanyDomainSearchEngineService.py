@@ -5,17 +5,18 @@ import dns
 import editdistance
 from urllib.parse import urlparse
 from tinydb import TinyDB, Query
-from src.SearchEngineService import SearchEngineService
+from src.SearchEngine import SearchEngine
 import tldextract
 import dns.resolver
+from src.SearchEngineService import SearchEngineService
+
 
 class CompanyDomainSearchEngineService(SearchEngineService):
 
 
     def __init__(self) -> None:
         super().__init__()
-        self._search_engine_service = SearchEngineService()
-        self._db = TinyDB('src/brainboost_data_source_search/brainboost_data_source_search_resultsdatabase/company_domains.json')
+        self._db = TinyDB('/brainboost/brainboost_data/data_storage/storage_local/local_goldenthinkerextractor_data/company_domains.json')
 
     # ================================== CACHE ============================================
 
@@ -241,7 +242,8 @@ class CompanyDomainSearchEngineService(SearchEngineService):
             return url
 
 
-    def search(self, company_name=None, country=None):
+    def search(self, query=None, pages=1,country=None):
+        company_name = query
         if company_name != None:
             company_name_normalized = self.normalize_company_name(company_name)
             cached_domain = self._get_cached_domain(company_name_normalized)

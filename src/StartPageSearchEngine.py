@@ -3,7 +3,9 @@ from bs4 import BeautifulSoup
 from src.SearchEngine import SearchEngine
 
 from brainboost_data_source_requests_package.UserAgentPool import UserAgentPool
+
 from configuration import storage_user_agent_pool_database_path
+
 
 class StartPageSearchEngine(SearchEngine):
     '''Searches startpage.com'''

@@ -1,12 +1,13 @@
 from src.SearchEngine import SearchEngine
-
+from brainboost_data_source_requests_package.UserAgentPool import UserAgentPool
 
 class BingSearchEngine(SearchEngine):
     '''Searches bing.com'''
     def __init__(self, proxy=None, timeout=10):
         super(BingSearchEngine, self).__init__(proxy, timeout)
         self._base_url = u'https://www.bing.com'
-        self.set_headers({'User-Agent':FAKE_USER_AGENT})
+        uap = UserAgentPool()
+        self.set_headers({'User-Agent':uap.get_random_user_agent()})
 
     def _selectors(self, element):
         '''Returns the appropriate CSS selector.'''

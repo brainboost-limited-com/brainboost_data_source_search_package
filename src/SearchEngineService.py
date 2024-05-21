@@ -2,12 +2,15 @@ from bs4 import BeautifulSoup
 import requests
 import editdistance
 
+from configuration import storage_user_agent_pool_database_path
+from configuration import storage_proxy_pool_database_path
+
 from src.GoogleSearchEngine import GoogleSearchEngine
 from src.GoogleSearchSerpapiEngine import GoogleSearchSerpapiEngine
 from src.BingSearchEngine import BingSearchEngine
 from src.YahooSearchEngine import YahooSearchEngine
 from src.DuckDuckGoSearchEngine import DuckDuckGoSearchEngine
-from src.StartpageSearchEngine import StartpageSearchEngine
+from src.StartPageSearchEngine import StartPageSearchEngine
 from src.AolSearchEngine import AolSearchEngine
 from src.DogpileSearchEngine import DogpileSearchEngine
 from src.AskSearchEngine import AskSearchEngine
@@ -19,6 +22,7 @@ from brainboost_data_source_requests_package.UserAgentPool import UserAgentPool
 
 
 
+
 import random
 from urllib.parse import urlparse
 from tld import get_tld
@@ -26,7 +30,7 @@ from tld import get_tld
 import whois
 import dns.resolver
 
-from src.GoogleSearchSerpapiEngine import GoogleSearchSerpapiEngineService
+from src.GoogleSearchSerpapiEngine import GoogleSearchSerpapiEngine
 
 class SearchEngineService:
 
@@ -45,7 +49,7 @@ class SearchEngineService:
                     "bing_search_local-Search-Engine-Scraper":BingSearchEngine(),
                     "yahoo_search_local-Search-Engine-Scraper":YahooSearchEngine(),
                     "duckduckgo_search_local-Search-Engine-Scraper":DuckDuckGoSearchEngine(),
-                    "startpage_search_local-Search-Engine-Scraper":StartpageSearchEngine(),
+                    "startpage_search_local-Search-Engine-Scraper":StartPageSearchEngine(),
                     "aol_search_local-Search-Engine-Scraper":AolSearchEngine(),
                     "dogpile_search_local-Search-Engine-Scraper":DogpileSearchEngine(),
                     "ask_search_local-Search-Engine-Scraper":AskSearchEngine(),
@@ -54,8 +58,8 @@ class SearchEngineService:
                     "torch_search_local-Search-Engine-Scraper": TorchSearchEngine(),
                     "google_search_serpapi": GoogleSearchSerpapiEngine()
         }
-        self._proxy_pool = ProxyPool()
-        self._useragent_pool = UserAgentPool()
+        self._proxy_pool = ProxyPool(proxy_db=storage_proxy_pool_database_path)
+        self._useragent_pool = UserAgentPool(user_agents_list_path=storage_user_agent_pool_database_path)
 
         
 

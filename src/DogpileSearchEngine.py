@@ -2,14 +2,14 @@ from src.SearchEngine import SearchEngine
 from brainboost_data_source_requests_package.UserAgentPool import UserAgentPool
 
 from src.utils import unquote_url
-
+from configuration import storage_user_agent_pool_database_path
 
 class DogpileSearchEngine(SearchEngine):
     '''Seaches dogpile.com'''
     def __init__(self, proxy=None, timeout=10):
         super(DogpileSearchEngine, self).__init__(proxy, timeout)
         self._base_url = 'https://www.dogpile.com'
-        uap = UserAgentPool()
+        uap = UserAgentPool(user_agents_list_path=storage_user_agent_pool_database_path)
         self.set_headers({'User-Agent':uap.get_random_user_agent()})
     
     def _selectors(self, element):

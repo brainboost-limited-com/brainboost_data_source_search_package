@@ -1,20 +1,20 @@
 import json
 import os
-from tqdm import tqdm
+from alive_progress import alive_bar
 from brainboost_data_tools_json_package.JSonProcessor import JSonProcessor
 
-from src.CompanyDomainSearchEngine import CompanyDomainSearchEngine
+from src.CompanyDomainSearchEngineService import CompanyDomainSearchEngineService
 from tinydb import TinyDB, Query
 
 json_processor = JSonProcessor()
-search_engine = CompanyDomainSearchEngine()
-data_source = '/brainboost/brainboost_data/data_storage/storage_local/local_goldenthinkerextractor_data/data_subjective'
+search_engine = CompanyDomainSearchEngineService()
+data_source = '/brainboost/brainboost_data/data_storage/storage_local/local_goldenthinkerextractor_data/'
 
 def get_companies(contacts):
     return json_processor.collect_values_of_particular_key_to_set(json_array=contacts, key='company')
 
 def process_company_domains(companies, search_engine, db):
-    with tqdm(total=len(companies), desc="Processing Companies") as pbar:
+    with alive_bar(len(companies), title="Processing Companies") as bar:
         for company in companies:
             if company.strip():  # Check if company name is not empty or only whitespace
                 existing_record = db.search(Query().company == company)
@@ -23,7 +23,10 @@ def process_company_domains(companies, search_engine, db):
                     domain = search_engine.search(company)
                     db.insert(dict({'company': company, 'domain': domain}))  # Store company and domain in TinyDB
 
-            pbar.update(1)
+                # Print the message above the progress bar
+                print(f"Processed company: {company}, domain: {domain}")
+
+            bar()  # Update the progress bar
 
 def save_company_domains_to_json(db, output_file):
     with open(output_file, 'w') as f:
