@@ -22,6 +22,7 @@ def process_company_domains(companies, search_engine, db):
                 if not existing_record:  # Insert only if the company does not exist in the database
                     domain = search_engine.search(company)
                     db.insert(dict({'company': company, 'domain': domain}))  # Store company and domain in TinyDB
+                    print('Inserted Domain: ' + str(domain))
 
                 # Print the message above the progress bar
                 print(f"Processed company: {company}, domain: {domain}")
