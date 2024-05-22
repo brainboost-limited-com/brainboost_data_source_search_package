@@ -1,15 +1,34 @@
 import dns.resolver
-import SearchEngineService
+import re
+from src.SearchEngineService import SearchEngineService
 
-class EmailSearchEngineService:
+class EmailSearchEngineService(SearchEngineService):
 
     def __init__(self):
-        self._search_engine_service_instance = SearchEngineService()
+        super().__init__()
 
-    def search(self, name, lastname, company):
-        # Implement the search logic for company domain based on name, lastname, and company
-        # This method seems incomplete, please complete the implementation based on your requirements
-        pass
+    def search(self, q="", engine=None, preview=False):
+        # Perform the search using the superclass method
+        search_results = super().search_with_preview(q, engine, preview)
+        
+        # Process the search results to extract possible email addresses
+        possible_emails = self.extract_emails_from_results(search_results)
+        
+        return possible_emails
+
+    def extract_emails_from_results(self, search_results):
+        emails = []
+        for result in search_results:
+            # Check the preview text for email addresses
+            preview_text = result.get('preview', '')
+            emails.extend(self.extract_emails(preview_text))
+        
+        return emails
+
+    def extract_emails(self, text):
+        # Extract email addresses using a simple regex pattern
+        email_pattern = r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
+        return re.findall(email_pattern, text)
 
     def get_email_enabled(self, domain):
         try:
@@ -21,7 +40,7 @@ class EmailSearchEngineService:
 
     def possible_email_addresses_of_a_contact(self, first_name, last_name, company_name):
         # Retrieve company domain using SearchEngineService
-        company_domain = self._search_engine_service_instance.search(company_name)
+        company_domain = self.search(company_name)
         
         if company_domain:
             if self.get_email_enabled(company_domain):

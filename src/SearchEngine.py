@@ -209,6 +209,37 @@ class SearchEngine(object):
         print('', end='')
         return self.results
     
+
+    def search_with_preview(self, query, pages=1):
+        '''Search and print results including preview text.'''
+        print('Searching {}'.format(self.__class__.__name__))
+        self._query = self.decode_bytes(query)
+        self.results = SearchResults()
+        request = self._first_page()
+
+        for page in range(1, pages + 1):
+            try:
+                response = self._get_page(request['url'], request['data'])
+                if not self._is_ok(response):
+                    break
+                tags = BeautifulSoup(response.html, "html.parser")
+                items = self._filter_results(tags)
+                self._collect_results(items)
+                
+                msg = 'page: {:<8} links: {}'.format(page, len(self.results))
+                print(msg, end='')
+                request = self._next_page(tags)
+
+                if not request['url']:
+                    break
+                if page < pages:
+                    sleep(random_uniform(*self._delay))
+            except KeyboardInterrupt:
+                break
+        print('', end='')
+        return self.results
+
+
     # def output(self, output=out.PRINT, path=None):
     #     '''Prints search results and/or creates report files.
     #     Supported output format: html, csv, json.

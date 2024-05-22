@@ -11,6 +11,9 @@ import dns.resolver
 from src.SearchEngineService import SearchEngineService
 
 
+
+# Given a company returns its domain
+
 class CompanyDomainSearchEngineService(SearchEngineService):
 
 

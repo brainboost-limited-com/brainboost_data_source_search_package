@@ -45,30 +45,26 @@ class SearchEngineService:
                 user_agent = line.strip()
                 user_agents.append(user_agent)
         self._engines_dict = { 
-                    "google_search_local-Search-Engine-Scraper":GoogleSearchEngine(),
-                    "bing_search_local-Search-Engine-Scraper":BingSearchEngine(),
-                    "yahoo_search_local-Search-Engine-Scraper":YahooSearchEngine(),
-                    "duckduckgo_search_local-Search-Engine-Scraper":DuckDuckGoSearchEngine(),
-                    "startpage_search_local-Search-Engine-Scraper":StartPageSearchEngine(),
-                    "aol_search_local-Search-Engine-Scraper":AolSearchEngine(),
-                    "dogpile_search_local-Search-Engine-Scraper":DogpileSearchEngine(),
-                    "ask_search_local-Search-Engine-Scraper":AskSearchEngine(),
-                    "mojeek_search_local-Search-Engine-Scraper": MojeekSearchEngine(),
-                    "brave_search_local-Search-Engine-Scraper": BraveSearchEngine(),
-                    "torch_search_local-Search-Engine-Scraper": TorchSearchEngine(),
-                    "google_search_serpapi": GoogleSearchSerpapiEngine()
+            "google_search_local-Search-Engine-Scraper": GoogleSearchEngine(),
+            "bing_search_local-Search-Engine-Scraper": BingSearchEngine(),
+            "yahoo_search_local-Search-Engine-Scraper": YahooSearchEngine(),
+            "duckduckgo_search_local-Search-Engine-Scraper": DuckDuckGoSearchEngine(),
+            "startpage_search_local-Search-Engine-Scraper": StartPageSearchEngine(),
+            "aol_search_local-Search-Engine-Scraper": AolSearchEngine(),
+            "dogpile_search_local-Search-Engine-Scraper": DogpileSearchEngine(),
+            "ask_search_local-Search-Engine-Scraper": AskSearchEngine(),
+            "mojeek_search_local-Search-Engine-Scraper": MojeekSearchEngine(),
+            "brave_search_local-Search-Engine-Scraper": BraveSearchEngine(),
+            "torch_search_local-Search-Engine-Scraper": TorchSearchEngine(),
+            "google_search_serpapi": GoogleSearchSerpapiEngine()
         }
         self._proxy_pool = ProxyPool(proxy_db=storage_proxy_pool_database_path)
         self._useragent_pool = UserAgentPool(user_agents_list_path=storage_user_agent_pool_database_path)
-
-        
-
         self._domain_for = {}
-        pass
 
 
 
-    def load_user_agents(self,file_path):
+    def load_user_agents(self, file_path):
         try:
             with open(file_path, 'r') as f:
                 user_agents = [line.strip() for line in f if line.strip()]
@@ -85,28 +81,46 @@ class SearchEngineService:
 
 
 
-    def search(self,q="",engine=None,preview=False):
-        print("Executing Query: " + q)        
-        if engine==None:
+    def search(self, q="", engine=None, preview=False):
+        return self._perform_search(q, engine, preview)
 
-            # Iterate over the dictionary items
+    def _perform_search(self, q="", engine=None, preview=False):
+        print("Executing Query: " + q)        
+        if engine is None:
             for key, engine in self._engines_dict.items():
                 try:
                     print("Searching from agent : " + key)
-                    results = engine.search(q,pages=1)
+                    results = engine.search(q, pages=1)
                     if results:
                         links = results.links()
                         if links: 
                             return links
                     else:
                         print(key + " engine failed. Using another..")
-                except:
-                    print("Error using search agent: " + key)
+                except Exception as e:
+                    print("Error using search agent: " + key, e)
         else:
             results = self._engines_dict[engine].search(q)
             links = results.links()
             return links
     
+    def search_with_preview(self, query, engine=None, preview=True):
+        search_results = self._perform_search(query, engine, preview)
+        
+        results_with_preview = []
+        for result in search_results:
+            link = result.get('link', '')
+            title = result.get('title', '')
+            text = result.get('text', '')
+
+            preview_text = text if preview else ''
+            results_with_preview.append({
+                'link': link,
+                'title': title,
+                'preview': preview_text
+            })
+
+        return results_with_preview
 
 
     def possible_email_addresses_of_a_contact(self, first_name, last_name, company_name):
