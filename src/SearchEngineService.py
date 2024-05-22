@@ -37,7 +37,7 @@ class SearchEngineService:
 
     def __init__(self) -> None:
         user_agents = []
-        file_path = '/brainboost/brainboost_data/data_source/data_source_user_agents.txt'
+        file_path = storage_user_agent_pool_database_path
         
         with open(file_path, 'r') as file:
             for line in file:
@@ -80,7 +80,7 @@ class SearchEngineService:
 
 
     def get_random_user_agent(self):
-        user_agents = self.load_user_agents('../resources/user_agents.txt')
+        user_agents = self.load_user_agents(storage_user_agent_pool_database_path)
         return random.choice(user_agents)
 
 

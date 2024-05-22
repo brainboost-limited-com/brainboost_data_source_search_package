@@ -3,4 +3,4 @@
 # brainboost_data_source_search_package_parameters
 
 storage_proxy_pool_database_path='/brainboost/brainboost_data/data_storage/storage_requests_package/storage_requests_proxy_database/proxies_db.json'
-storage_user_agent_pool_database_path='/brainboost/data_storage/storage_requests_package/storage_requests_user_angent_database/user_agents.txt'
+storage_user_agent_pool_database_path='/brainboost/brainboost_data/data_storage/storage_user_agents_database/data_source_user_agents.txt'
