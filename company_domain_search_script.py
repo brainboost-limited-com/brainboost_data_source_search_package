@@ -41,7 +41,7 @@ if __name__ == "__main__":
     companies = get_companies(contacts=contacts)
     
     # Create/open TinyDB database
-    db = TinyDB('/brainboost/brainboost_data/data_storage/storage_local/local_goldenthinkerextractor_data/company_domains.json')
+    db = TinyDB('/brainboost/brainboost_data/data_storage/storage_company_names_and_domains/company_domains.json')
     
     # Process company domains with progress bar and store in TinyDB
     process_company_domains(companies, search_engine, db)

@@ -16,7 +16,7 @@ class CompanyDomainSearchEngineService(SearchEngineService):
 
     def __init__(self) -> None:
         super().__init__()
-        self._db = TinyDB('/brainboost/brainboost_data/data_storage/storage_local/local_goldenthinkerextractor_data/company_domains.json')
+        self._db = TinyDB('/brainboost/brainboost_data/data_storage/storage_company_names_and_domains/company_domains.json')
 
     # ================================== CACHE ============================================
 
