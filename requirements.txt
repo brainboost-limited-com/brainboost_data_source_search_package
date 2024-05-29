@@ -44,3 +44,4 @@ urllib3==2.2.1
 wheel==0.43.0
 whois==1.20240129.2
 yarl==1.9.4
+stem

@@ -266,7 +266,7 @@ class CompanyDomainSearchEngineService(SearchEngineService):
                         return company_domain_specific_country
                 best_domain_candidate = self.get_company_domain_in_case_no_country_specific_not_default_extension(company_name=company_name)
                 if best_domain_candidate!=None:
-                    print('Searched the web: ' + str(best_domain_candidate))
+                    print('Searched and found the domain: ' + str(best_domain_candidate))
                     return best_domain_candidate
                 else:
                     invented_domain = company_name_normalized+'.com'
