@@ -3,5 +3,10 @@
         "test"
     ],
     "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true
+    "python.testing.pytestEnabled": true,
+    "workbench.colorCustomizations": {
+        "activityBar.background": "#003617",
+        "titleBar.activeBackground": "#014B21",
+        "titleBar.activeForeground": "#E8FFF2"
+    }
 }
